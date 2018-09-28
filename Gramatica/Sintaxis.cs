@@ -78,6 +78,11 @@ namespace FI_Editor.Gramatica
             NonTerminal CONDICION = new NonTerminal("CONDICION");
             NonTerminal ACCION = new NonTerminal("ACCION");
             NonTerminal LISTA_ACCIONES = new NonTerminal("LISTA_ACCIONES");
+            NonTerminal TIPO_DATO = new NonTerminal("TIPO_DATO");
+            NonTerminal OPCIONES_DECLARACION = new NonTerminal("OPCIONES_DECLARACION");
+            NonTerminal OPCION_DOS = new NonTerminal("OPCION_DOS");
+            NonTerminal DECL_SIMPLE = new NonTerminal("DECL_SIMPLE");
+            NonTerminal LISTA_SIMPLES = new NonTerminal("LISTA_SIMPLES");
             #endregion
 
             #region Gramatica Principal
@@ -90,6 +95,27 @@ namespace FI_Editor.Gramatica
 
             ACCION.Rule = DECLARACION
                 | METODO;
+
+            #endregion
+
+            #region Declaracion
+
+            DECLARACION.Rule = TIPO_DATO + OPCIONES_DECLARACION + ToTerm(";");
+
+            OPCIONES_DECLARACION.Rule = LISTA_VARS
+                | LISTA_VARS + ToTerm("=") + EXPRESION_LOGICA
+                | OPCION_DOS;
+
+            LISTA_VARS.Rule = LISTA_VARS + ToTerm(",") + identificador
+                | identificador;
+
+            DECL_SIMPLE.Rule = identificador + ToTerm("=") + EXPRESION_LOGICA;
+
+            OPCION_DOS.Rule = DECL_SIMPLE + LISTA_SIMPLES;
+
+            LISTA_SIMPLES.Rule = LISTA_SIMPLES + ToTerm(",") + DECL_SIMPLE
+                | ToTerm(",") + DECL_SIMPLE;
+
             #endregion
         }
     }
