@@ -1,0 +1,27 @@
+int principal() {
+	int a = 10;
+	char* b = "arreglo de caracteres";
+	float c = 15.5;
+	bool d = false;
+}
+
+int e, f, g, h = 56;
+bool r = false, i = true, j = false;
+
+char* metodo1(String a, String b) {
+	return a + " " + b;
+}
+
+int metodo2(int a) {
+	if (a < 10) {
+		while (a < 15) {
+			a++;
+		}
+	}
+	else {
+		do {
+			a--;
+		}
+		while (a > 0);
+	}
+} 

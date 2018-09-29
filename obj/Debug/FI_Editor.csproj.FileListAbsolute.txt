@@ -3,7 +3,6 @@ C:\Users\jacab\Documents\Proyectos\Compi1P2_FI\FI_Editor\FI_Editor\bin\Debug\FI_
 C:\Users\jacab\Documents\Proyectos\Compi1P2_FI\FI_Editor\FI_Editor\bin\Debug\FI_Editor.pdb
 C:\Users\jacab\Documents\Proyectos\Compi1P2_FI\FI_Editor\FI_Editor\bin\Debug\Irony.dll
 C:\Users\jacab\Documents\Proyectos\Compi1P2_FI\FI_Editor\FI_Editor\bin\Debug\Irony.Interpreter.dll
-C:\Users\jacab\Documents\Proyectos\Compi1P2_FI\FI_Editor\FI_Editor\obj\Debug\FI_Editor.csprojAssemblyReference.cache
 C:\Users\jacab\Documents\Proyectos\Compi1P2_FI\FI_Editor\FI_Editor\obj\Debug\FI_Editor.Form1.resources
 C:\Users\jacab\Documents\Proyectos\Compi1P2_FI\FI_Editor\FI_Editor\obj\Debug\FI_Editor.Properties.Resources.resources
 C:\Users\jacab\Documents\Proyectos\Compi1P2_FI\FI_Editor\FI_Editor\obj\Debug\FI_Editor.csproj.GenerateResource.cache

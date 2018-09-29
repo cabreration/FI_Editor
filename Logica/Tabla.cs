@@ -37,6 +37,8 @@ namespace FI_Editor.Logica
         }
 
         public void insertarSinValor(Simbolo simbolo) {
+            if (this.tabla == null) this.tabla = new ArrayList();
+
             if (contiene(simbolo.identificador))
                 throw new Exception("la variable ha sido declarada en el mismo ambito anteriormente");
 
@@ -77,5 +79,46 @@ namespace FI_Editor.Logica
                     break;
             }
         }
+
+        public void actualizarValor(String identificador, Object valor) {
+            if (!(contiene(identificador)))
+                throw new Exception("La variable " + identificador + " no existe en el contexto actual");
+
+            foreach (Object sim in this.tabla) {
+                if (((Simbolo)sim).identificador.Equals(identificador)) {
+
+                    switch (((Simbolo)sim).tipo) {
+                        case "int":
+                            if (valor is int)
+                                ((Simbolo)sim).valor = valor;
+                            else throw new Exception("El valor asignado a la variable " + identificador
+                                + " no es de tipo int");
+                            break;
+
+                        case "float":
+                            if (valor is double)
+                                ((Simbolo)sim).valor = valor;
+                            else throw new Exception("El valor asignado a la variable " + identificador
+                                + " no es de tipo float");
+                            break;
+
+                        case "char*":
+                            if (valor is String)
+                                ((Simbolo)sim).valor = valor;
+                            else throw new Exception("El valor asignado a la variable " + identificador
+                                + " no es de tipo char*");
+                            break;
+
+                        case "bool":
+                            if (valor is bool)
+                                ((Simbolo)sim).valor = valor;
+                            else throw new Exception("El valor asignado a la variable " + identificador
+                                + " no es de tipo bool");
+                            break;
+                    }
+                }
+            }
+        }
+
     }
 }

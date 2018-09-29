@@ -8,11 +8,11 @@ namespace FI_Editor.Gramatica
 {
     class ErrorC
     {
-        private int linea;
-        private int columna;
-        private String lexema;
-        private String tipo;
-        private String descripcion;
+        public int linea;
+        public int columna;
+        public String lexema;
+        public String tipo;
+        public String descripcion;
 
         public ErrorC(int linea, int columna, String lexema, String tipo, String descripcion) {
 

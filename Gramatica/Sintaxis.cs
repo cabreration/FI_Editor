@@ -99,6 +99,7 @@ namespace FI_Editor.Gramatica
             NonTerminal ELSE = new NonTerminal("ELSE");
             NonTerminal PARS_LLAMADA = new NonTerminal("PARS_LLAMADA");
             NonTerminal PRINCIPAL = new NonTerminal("PRINCIPAL");
+            NonTerminal OTRA_VAR = new NonTerminal("OTRA_VAR");
             #endregion
 
             #region Precedencias
@@ -132,8 +133,10 @@ namespace FI_Editor.Gramatica
                 | LISTA_VARS + ToTerm("=") + EXPRESION_LOGICA
                 | OPCION_DOS;
 
-            LISTA_VARS.Rule = LISTA_VARS + ToTerm(",") + identificador
-                | identificador;
+            LISTA_VARS.Rule = identificador + OTRA_VAR;
+
+            OTRA_VAR.Rule = ToTerm(",") + identificador + OTRA_VAR
+                | Empty;
 
             DECL_SIMPLE.Rule = identificador + ToTerm("=") + EXPRESION_LOGICA;
 
@@ -150,11 +153,8 @@ namespace FI_Editor.Gramatica
 
             #region Metodo
 
-            PRINCIPAL.Rule = TIPO_DATO + principal + "(" + LISTA_PARAMETROS + ")" + ToTerm("{")
-                + LISTA_SENTENCIAS + ToTerm("}")
-                | TIPO_DATO + principal + "(" + ")" + ToTerm("{") + LISTA_SENTENCIAS + ToTerm("}")
-                | TIPO_DATO + principal + "(" + ")" + ToTerm("{") + ToTerm("}")
-                | TIPO_DATO + principal + "(" + LISTA_PARAMETROS + ")" + ToTerm("{") + ToTerm("}");
+            PRINCIPAL.Rule = entero + principal + "(" + ")" + ToTerm("{") + LISTA_SENTENCIAS + ToTerm("}")
+                | entero + principal + "(" + ")" + ToTerm("{") + ToTerm("}");               
 
             METODO.Rule = TIPO_DATO + identificador + "(" + LISTA_PARAMETROS + ")" + ToTerm("{")
                 + LISTA_SENTENCIAS + ToTerm("}")
@@ -254,7 +254,9 @@ namespace FI_Editor.Gramatica
                 | identificador + incremento
                 | identificador + decremento
                 | verdadero
-                | falso;
+                | falso
+                | cadena
+                | numero;
             #endregion
         }
     }
