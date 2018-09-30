@@ -13,7 +13,35 @@ namespace FI_Editor.Logica
     {
         public static List<ErrorC> errores;
         public static Tabla ambitoGlobal;
-        public static List<String> metodos;
+        public static List<Procedimiento> metodos;
         public static ParseTreeNode root;
+        public static Procedimiento metodoMain;
+
+        public static bool contieneMetodo(String identificador) {
+            if (Global.metodos == null) return false;
+
+            if (Global.metodos.Count < 1) return false;
+
+            foreach (Procedimiento proc in Global.metodos) {
+                if (proc.identificador.Equals(identificador))
+                    return true;
+            }
+            return false;
+        }
+
+        public static void insertarMetodo(Procedimiento procedimiento) {
+            if (contieneMetodo(procedimiento.identificador))
+                throw new Exception("Ya existe un metodo " + procedimiento.identificador);
+
+            Global.metodos.Add(procedimiento);
+        }
+
+        public static Procedimiento buscarProcedimiento(String identificador) {
+            foreach (Procedimiento proc in Global.metodos) {
+                if (proc.identificador.Equals(identificador))
+                    return proc;
+            }
+            return null;
+        }
     }
 }

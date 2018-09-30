@@ -10,3 +10,4 @@ C:\Users\jacab\Documents\Proyectos\Compi1P2_FI\FI_Editor\FI_Editor\obj\Debug\FI_
 C:\Users\jacab\Documents\Proyectos\Compi1P2_FI\FI_Editor\FI_Editor\obj\Debug\FI_Editor.csproj.CopyComplete
 C:\Users\jacab\Documents\Proyectos\Compi1P2_FI\FI_Editor\FI_Editor\obj\Debug\FI_Editor.exe
 C:\Users\jacab\Documents\Proyectos\Compi1P2_FI\FI_Editor\FI_Editor\obj\Debug\FI_Editor.pdb
+C:\Users\jacab\Documents\Proyectos\Compi1P2_FI\FI_Editor\FI_Editor\obj\Debug\FI_Editor.csprojAssemblyReference.cache

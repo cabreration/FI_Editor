@@ -102,6 +102,11 @@ namespace FI_Editor
             else
             {
                 Global.root = raiz;
+                Global.ambitoGlobal = new Tabla();
+                Global.metodos = new List<Procedimiento>();
+                Acciones verdugo = new Acciones();
+                //verdugo.reconocer(raiz);
+                //Tabla aux = Global.ambitoGlobal;
                 MessageBox.Show("Analisis Completa con Exito :v", "CRL",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }

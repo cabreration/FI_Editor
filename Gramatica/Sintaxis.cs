@@ -11,14 +11,6 @@ namespace FI_Editor.Gramatica
     class Sintaxis:Grammar
     {
         public Sintaxis() : base(caseSensitive: true) {
-            
-            #region ExpresionesRegulares
-            var numero = TerminalFactory.CreateCSharpNumber("numero");
-            var identificador = TerminalFactory.CreateCSharpIdentifier("identificador");
-            var cadena = TerminalFactory.CreateCSharpString("cadena");
-            var falso = ToTerm("false", "falso");
-            var verdadero = ToTerm("true", "verdadero");
-            #endregion
 
             #region Terminales
 
@@ -26,7 +18,7 @@ namespace FI_Editor.Gramatica
             var entero = ToTerm("int", "int");
             var flotante = ToTerm("float", "float");
             var booleano = ToTerm("bool", "bool");
-            var charAr = ToTerm("char*", "char*");
+            var charAr = ToTerm("char", "char");
 
             // Palabras reservadas
             var retorno = ToTerm("return", "return");
@@ -64,6 +56,16 @@ namespace FI_Editor.Gramatica
             var decremento = ToTerm("--", "--");
             var parentesisA = ToTerm("(", "(");
             var parentesisC = ToTerm(")", ")");
+            var coma = ToTerm(",", ",");
+            var finSentencia = ToTerm(";", ";");
+            #endregion
+
+            #region ExpresionesRegulares
+            var numero = TerminalFactory.CreateCSharpNumber("numero");
+            var identificador = TerminalFactory.CreateCSharpIdentifier("identificador");
+            var cadena = TerminalFactory.CreateCSharpString("cadena");
+            var falso = ToTerm("false", "falso");
+            var verdadero = ToTerm("true", "verdadero");
             #endregion
 
             #region No Terminales
@@ -83,8 +85,6 @@ namespace FI_Editor.Gramatica
             NonTerminal TIPO_DATO = new NonTerminal("TIPO_DATO");
             NonTerminal OPCIONES_DECLARACION = new NonTerminal("OPCIONES_DECLARACION");
             NonTerminal OPCION_DOS = new NonTerminal("OPCION_DOS");
-            NonTerminal DECL_SIMPLE = new NonTerminal("DECL_SIMPLE");
-            NonTerminal LISTA_SIMPLES = new NonTerminal("LISTA_SIMPLES");
             NonTerminal OPERADOR_RELACIONAL = new NonTerminal("OPERADOR_RELACIONAL");
             NonTerminal ASIGNADORES = new NonTerminal("ASIGNADORES");
             NonTerminal LISTA_SENTENCIAS = new NonTerminal("LISTA_SENTENCIAS");
@@ -99,7 +99,7 @@ namespace FI_Editor.Gramatica
             NonTerminal ELSE = new NonTerminal("ELSE");
             NonTerminal PARS_LLAMADA = new NonTerminal("PARS_LLAMADA");
             NonTerminal PRINCIPAL = new NonTerminal("PRINCIPAL");
-            NonTerminal OTRA_VAR = new NonTerminal("OTRA_VAR");
+            NonTerminal SIMPLE = new NonTerminal("SIMPLE");
             #endregion
 
             #region Precedencias
@@ -108,119 +108,113 @@ namespace FI_Editor.Gramatica
             RegisterOperators(4, Associativity.Left, conjuncion);
             RegisterOperators(5, Associativity.Left, disyuncion);
             RegisterOperators(7, Associativity.Left, parentesisA, parentesisC);
+
+            this.MarkPunctuation(parentesisA, parentesisC, coma, finSentencia);
+            this.MarkPunctuation("{", "}");
             #endregion
 
             #region Gramatica Principal
             this.Root = INICIO;
 
-            INICIO.Rule = LISTA_ACCIONES;
+            INICIO.Rule = LISTA_ACCIONES
+                | Empty;
 
-            LISTA_ACCIONES.Rule = LISTA_ACCIONES + ACCION
-                | ACCION;
+            LISTA_ACCIONES.Rule = MakePlusRule(LISTA_ACCIONES, ACCION);
 
             ACCION.Rule = DECLARACION
                 | METODO
                 | FUNCION_IMPRIMIR
-                | PRINCIPAL;
+                | PRINCIPAL
+                | ASIGNACION_VAR;
 
             #endregion
 
             #region Declaracion
 
-            DECLARACION.Rule = TIPO_DATO + OPCIONES_DECLARACION + ToTerm(";");
+            DECLARACION.Rule = TIPO_DATO + OPCIONES_DECLARACION;
 
-            OPCIONES_DECLARACION.Rule = LISTA_VARS
-                | LISTA_VARS + ToTerm("=") + EXPRESION_LOGICA
-                | OPCION_DOS;
+            OPCIONES_DECLARACION.Rule = LISTA_VARS + finSentencia
+                | OPCION_DOS + finSentencia;
 
-            LISTA_VARS.Rule = identificador + OTRA_VAR;
+            LISTA_VARS.Rule = MakePlusRule(LISTA_VARS, coma, identificador);
 
-            OTRA_VAR.Rule = ToTerm(",") + identificador + OTRA_VAR
-                | Empty;
+            SIMPLE.Rule = LISTA_VARS + asignacion + EXPRESION_LOGICA;
 
-            DECL_SIMPLE.Rule = identificador + ToTerm("=") + EXPRESION_LOGICA;
-
-            OPCION_DOS.Rule = DECL_SIMPLE + LISTA_SIMPLES;
-
-            LISTA_SIMPLES.Rule = LISTA_SIMPLES + ToTerm(",") + DECL_SIMPLE
-                | ToTerm(",") + DECL_SIMPLE;
+            OPCION_DOS.Rule = MakePlusRule(OPCION_DOS, coma, SIMPLE);
 
             TIPO_DATO.Rule = entero
                 | booleano
-                | charAr
+                | charAr + multiplicar
                 | flotante;
             #endregion
 
             #region Metodo
 
-            PRINCIPAL.Rule = entero + principal + "(" + ")" + ToTerm("{") + LISTA_SENTENCIAS + ToTerm("}")
-                | entero + principal + "(" + ")" + ToTerm("{") + ToTerm("}");               
+            PRINCIPAL.Rule = entero + principal + parentesisA + parentesisC + ToTerm("{") + LISTA_SENTENCIAS + ToTerm("}")
+                | entero + principal + parentesisA + parentesisC + ToTerm("{") + ToTerm("}");               
 
-            METODO.Rule = TIPO_DATO + identificador + "(" + LISTA_PARAMETROS + ")" + ToTerm("{")
+            METODO.Rule = TIPO_DATO + identificador + parentesisA + LISTA_PARAMETROS + parentesisC + ToTerm("{")
                 + LISTA_SENTENCIAS + ToTerm("}")
-                | TIPO_DATO + identificador + "(" + ")" + ToTerm("{") + LISTA_SENTENCIAS + ToTerm("}")
-                | TIPO_DATO + identificador + "(" + ")" + ToTerm("{") + ToTerm("}")
-                | TIPO_DATO + identificador + "(" + LISTA_PARAMETROS + ")" + ToTerm("{") + ToTerm("}");
+                | TIPO_DATO + identificador + parentesisA + parentesisC + ToTerm("{") + LISTA_SENTENCIAS + ToTerm("}")
+                | TIPO_DATO + identificador + parentesisA + parentesisC + ToTerm("{") + ToTerm("}")
+                | TIPO_DATO + identificador + parentesisA + LISTA_PARAMETROS + parentesisC + ToTerm("{") + ToTerm("}");
 
-            LISTA_PARAMETROS.Rule = LISTA_PARAMETROS + ToTerm(",") + PARAMETRO
-                | PARAMETRO;
+            LISTA_PARAMETROS.Rule = MakePlusRule(LISTA_PARAMETROS, coma, PARAMETRO);
 
             PARAMETRO.Rule = TIPO_DATO + identificador;
 
-            LISTA_SENTENCIAS.Rule = LISTA_SENTENCIAS + SENTENCIA
-                | SENTENCIA;
+            LISTA_SENTENCIAS.Rule = MakePlusRule(LISTA_SENTENCIAS, SENTENCIA);
 
             SENTENCIA.Rule = WHILE
                 | DO_WHILE
                 | IF_ELSE
                 | DECLARACION
                 | ASIGNACION_VAR
-                | DINCREMENTOS + ToTerm(";")
-                | LLAMADA + ToTerm(";")
+                | DINCREMENTOS + finSentencia
+                | LLAMADA + finSentencia
                 | FUNCION_IMPRIMIR
                 | RETORNO;
 
             DINCREMENTOS.Rule = identificador + incremento
                 | identificador + decremento;
 
-            RETORNO.Rule = retorno + EXPRESION_LOGICA + ToTerm(";");
+            RETORNO.Rule = retorno + EXPRESION_LOGICA + finSentencia;
 
-            ASIGNACION_VAR.Rule = identificador + ASIGNADORES + EXPRESION_LOGICA + ToTerm(";");
+            ASIGNACION_VAR.Rule = identificador + ASIGNADORES + EXPRESION_LOGICA + finSentencia;
 
             ASIGNADORES.Rule = asignacion
                 | masIgual
                 | menosIgual;
 
-            FUNCION_IMPRIMIR.Rule = print + "(" + EXPRESION + ")" + ToTerm(";");
+            FUNCION_IMPRIMIR.Rule = print + parentesisA + EXPRESION + parentesisC + finSentencia;
 
-            LLAMADA.Rule = identificador + "(" + PARS_LLAMADA + ")"
-                | identificador + "(" + ")";
+            LLAMADA.Rule = identificador + parentesisA + PARS_LLAMADA + parentesisC
+                | identificador + parentesisA + parentesisC;
 
-            PARS_LLAMADA.Rule = PARS_LLAMADA + ToTerm(",") + EXPRESION_LOGICA
-                | EXPRESION_LOGICA;
+            PARS_LLAMADA.Rule = MakePlusRule(PARS_LLAMADA, coma, EXPRESION_LOGICA);
             #endregion
 
             #region While
 
-            WHILE.Rule = mientras + "(" + CONDICION + ")" + ToTerm("{") + LISTA_SENTENCIAS + ToTerm("}")
-                | mientras + "(" + CONDICION + ")" + ToTerm("{") + ToTerm("}");
+            WHILE.Rule = mientras + parentesisA + CONDICION + parentesisC + ToTerm("{") + LISTA_SENTENCIAS + ToTerm("}")
+                | mientras + parentesisA + CONDICION + parentesisC + ToTerm("{") + ToTerm("}");
 
             CONDICION.Rule = EXPRESION_LOGICA;
             #endregion
 
             #region Do_While
 
-            DO_WHILE.Rule = hacer + ToTerm("{") + LISTA_SENTENCIAS + ToTerm("}") + mientras + "("
-                + CONDICION + ")" + ToTerm(";")
-                | hacer + ToTerm("{") + ToTerm("}") + mientras + "(" + CONDICION + ")" + ToTerm(";");
+            DO_WHILE.Rule = hacer + ToTerm("{") + LISTA_SENTENCIAS + ToTerm("}") + mientras + parentesisA
+                + CONDICION + parentesisC + finSentencia
+                | hacer + ToTerm("{") + ToTerm("}") + mientras + parentesisA + CONDICION + parentesisC + finSentencia;
             #endregion
 
             #region If_Else
 
-            IF_ELSE.Rule = si + "(" + CONDICION + ")" + ToTerm("{") + LISTA_SENTENCIAS + ToTerm("}")
-                | si + "(" + CONDICION + ")" + ToTerm("{") + ToTerm("}")
-                | si + "(" + CONDICION + ")" + ToTerm("{") + LISTA_SENTENCIAS + ToTerm("}") + ELSE
-                | si + "(" + CONDICION + ")" + ToTerm("{") + ToTerm("}") + ELSE;
+            IF_ELSE.Rule = si + parentesisA + CONDICION + parentesisC + ToTerm("{") + LISTA_SENTENCIAS + ToTerm("}")
+                | si + parentesisA + CONDICION + parentesisC + ToTerm("{") + ToTerm("}")
+                | si + parentesisA + CONDICION + parentesisC + ToTerm("{") + LISTA_SENTENCIAS + ToTerm("}") + ELSE
+                | si + parentesisA + CONDICION + parentesisC + ToTerm("{") + ToTerm("}") + ELSE;
 
             ELSE.Rule = sino + ToTerm("{") + LISTA_SENTENCIAS + ToTerm("}")
                 | sino + ToTerm("{") + ToTerm("}");

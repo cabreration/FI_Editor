@@ -21,6 +21,7 @@ namespace FI_Editor.Logica
         public Simbolo(String tipo, String identificador) {
             this.tipo = tipo;
             this.identificador = identificador;
+            this.valor = null;
         }
 
         public Simbolo(String tipo, String identificador, Object valor) {

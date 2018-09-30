@@ -60,7 +60,10 @@
     </Compile>
     <Compile Include="Gramatica\ErrorC.cs" />
     <Compile Include="Gramatica\Sintaxis.cs" />
+    <Compile Include="Logica\Acciones.cs" />
+    <Compile Include="Logica\Calculadora.cs" />
     <Compile Include="Logica\Global.cs" />
+    <Compile Include="Logica\Procedimiento.cs" />
     <Compile Include="Logica\Simbolo.cs" />
     <Compile Include="Logica\Tabla.cs" />
     <Compile Include="Program.cs" />
