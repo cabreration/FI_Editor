@@ -104,7 +104,8 @@ namespace FI_Editor.Gramatica
 
             #region Precedencias
             RegisterOperators(1, Associativity.Left, sumar, restar);
-            RegisterOperators(2, Associativity.Left, multiplicar, dividir, modular);
+            RegisterOperators(2, Associativity.Left, multiplicar, dividir);
+            RegisterOperators(3, Associativity.Left, modular);
             RegisterOperators(4, Associativity.Left, conjuncion);
             RegisterOperators(5, Associativity.Left, disyuncion);
             RegisterOperators(7, Associativity.Left, parentesisA, parentesisC);
