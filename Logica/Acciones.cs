@@ -36,17 +36,48 @@ namespace FI_Editor.Logica
                     if (raiz.ChildNodes.Count == 2)
                     {
                         String tipo = raiz.ChildNodes[0].ChildNodes[0].Term.Name;
-                        guardarVariable(raiz.ChildNodes[1], tipo);
+                        guardarVariable(raiz.ChildNodes[1], tipo, Global.ambitoGlobal);
                     }
                     break;
 
                 case "METODO":
+                    String tipoM = raiz.ChildNodes[0].ChildNodes[0].FindTokenAndGetText();
+                    String identificador = raiz.ChildNodes[1].FindTokenAndGetText();
+                    Procedimiento metodo = null;
+                    if (raiz.ChildNodes.Count == 4 || raiz.ChildNodes.Count == 3)
+                    {
+                        List<Simbolo> aux = new List<Simbolo>();
+                        if (raiz.ChildNodes[2].Term.Name.Equals("LISTA_PARAMETROS"))
+                        {
+                            foreach (ParseTreeNode hijo in raiz.ChildNodes[2].ChildNodes)
+                            {
+                                String tipoP = hijo.ChildNodes[0].ChildNodes[0].FindTokenAndGetText();
+                                String identificadorP = hijo.ChildNodes[1].FindTokenAndGetText();
+                                Simbolo simP = new Simbolo(tipoP, identificadorP);
+                                aux.Add(simP);
+                            }
+                            if (raiz.ChildNodes.Count == 4)
+                                metodo = new Procedimiento(tipoM, identificador, raiz.ChildNodes[3], aux);
+                            else
+                                metodo = new Procedimiento(tipoM, identificador, null, aux);
+                        }
+                        else if (raiz.ChildNodes[2].Term.Name.Equals("LISTA_SENTENCIAS"))
+                            metodo = new Procedimiento(tipoM, identificador, raiz.ChildNodes[2]);
+                    }
+                    else if (raiz.ChildNodes.Count == 2) {
+                        metodo = new Procedimiento(tipoM, identificador, null);
+                    }
+                    Global.metodos.Add(metodo);
                     break;
 
                 case "FUNCION_IMPRIMIR":
                     break;
 
                 case "PRINCIPAL":
+                    if (raiz.ChildNodes.Count == 3)
+                        Global.metodoMain = raiz.ChildNodes[2];
+                    else
+                        Global.metodoMain = null;
                     break;
 
                 case "ASIGNACION_VAR":
@@ -55,12 +86,12 @@ namespace FI_Editor.Logica
         }
 
 
-        public void guardarVariable(ParseTreeNode raiz, String tipo) {
+        public void guardarVariable(ParseTreeNode raiz, String tipo, Tabla ambito) {
             if (raiz.ChildNodes[0].Term.Name.Equals("LISTA_VARS"))
             {
                 foreach (ParseTreeNode root in raiz.ChildNodes[0].ChildNodes) {
                     Simbolo sim = new Simbolo(tipo, root.FindTokenAndGetText());
-                    Global.ambitoGlobal.insertarSinValor(sim);
+                    ambito.insertarSinValor(sim);
                 }
             }
             else if (raiz.ChildNodes[0].Term.Name.Equals("OPCION_DOS"))
@@ -72,7 +103,7 @@ namespace FI_Editor.Logica
                         foreach (ParseTreeNode vari in root.ChildNodes[0].ChildNodes)
                         {
                             Simbolo sim = new Simbolo(tipo, vari.FindTokenAndGetText(), valor);
-                            Global.ambitoGlobal.insertarConValor(sim);
+                            ambito.insertarConValor(sim);
                         }
                     }
                     catch (Exception e)
@@ -180,5 +211,9 @@ namespace FI_Editor.Logica
             }
             return null;
         }
+
+        public Object llamada(String identificador, List<Simbolo> parametros) {
+            return null;
+        } 
     }
 }
