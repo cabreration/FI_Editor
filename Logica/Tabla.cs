@@ -129,5 +129,22 @@ namespace FI_Editor.Logica
 
             throw new Exception("La variable " + identificador + " no ha sido declarada en el contexto actual");
         }
+
+        public void heredar() {
+
+            foreach (Simbolo sim in this.padre.tabla) {
+                this.tabla.Add(sim);
+            }
+        }
+
+        public void actualizarPadre() {
+
+            foreach (Simbolo sim in this.tabla) {
+                foreach (Simbolo sim2 in this.padre.tabla) {
+                    if (sim.identificador.Equals(sim2.identificador))
+                        sim2.valor = sim.valor;
+                }
+            }
+        }
     }
 }

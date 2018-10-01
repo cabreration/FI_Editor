@@ -1,16 +1,22 @@
-int principal() {
+int main() {
 	int a = 10;
 	char* b = "arreglo de caracteres";
 	float c = 15.5;
 	bool d = false;
 }
 
-int e, f, g, h = 56;
-bool r = false, i = true, j = false;
+int h = 56 + 4;
+float p = 8*9-2.5;
+int e = 81/9;
+int f = -5 +8;
+char* o = "hola" + " hola";
+bool r = 5 < 9, i = "hola" != "hola", j = 5 > 10;
+bool q = true && false;
+bool y = false || false;
 
 r = true;
 
-char* metodo1(String a, String b) {
+char* metodo1(char* a, char* b) {
 	return a + " " + b;
 }
 

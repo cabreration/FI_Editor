@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,12 +37,15 @@ namespace FI_Editor.Logica
                     if (raiz.ChildNodes.Count == 2)
                     {
                         String tipo = raiz.ChildNodes[0].ChildNodes[0].Term.Name;
+                        if (tipo.Equals("char"))
+                            tipo = "char*";
                         guardarVariable(raiz.ChildNodes[1], tipo, Global.ambitoGlobal);
                     }
                     break;
 
                 case "METODO":
                     String tipoM = raiz.ChildNodes[0].ChildNodes[0].FindTokenAndGetText();
+                    if (tipoM.Equals("char")) tipoM = "char*";
                     String identificador = raiz.ChildNodes[1].FindTokenAndGetText();
                     Procedimiento metodo = null;
                     if (raiz.ChildNodes.Count == 4 || raiz.ChildNodes.Count == 3)
@@ -52,6 +56,7 @@ namespace FI_Editor.Logica
                             foreach (ParseTreeNode hijo in raiz.ChildNodes[2].ChildNodes)
                             {
                                 String tipoP = hijo.ChildNodes[0].ChildNodes[0].FindTokenAndGetText();
+                                if (tipoP.Equals("char")) tipoP = "char*";
                                 String identificadorP = hijo.ChildNodes[1].FindTokenAndGetText();
                                 Simbolo simP = new Simbolo(tipoP, identificadorP);
                                 aux.Add(simP);
@@ -160,21 +165,38 @@ namespace FI_Editor.Logica
                 case "EXPRESION":
                     if (root.ChildNodes.Count == 3)
                     {
+                        Object retorno = null;
                         if (root.ChildNodes[1].Term.Name.Equals("+"))
-                            return Calculadora.sumar(obtenerValor(root.ChildNodes[0], ambito),
-                                obtenerValor(root.ChildNodes[2], ambito));
+                        {
+                            retorno = Calculadora.sumar(obtenerValor(root.ChildNodes[0], ambito),
+                                 obtenerValor(root.ChildNodes[2], ambito));
+                            return retorno;
+                        }
                         else if (root.ChildNodes[1].Term.Name.Equals("-"))
-                            return Calculadora.restar(obtenerValor(root.ChildNodes[0], ambito),
+                        {
+                            retorno = Calculadora.restar(obtenerValor(root.ChildNodes[0], ambito),
                                 obtenerValor(root.ChildNodes[2], ambito));
+                            return retorno;
+                        }
                         else if (root.ChildNodes[1].Term.Name.Equals("*"))
-                            return Calculadora.multiplicar(obtenerValor(root.ChildNodes[0], ambito),
+                        {
+                            retorno = Calculadora.multiplicar(obtenerValor(root.ChildNodes[0], ambito),
                                 obtenerValor(root.ChildNodes[2], ambito));
+                            return retorno;
+                        }
                         else if (root.ChildNodes[1].Term.Name.Equals("/"))
-                            return Calculadora.dividir(obtenerValor(root.ChildNodes[0], ambito),
+                        {
+                            retorno = Calculadora.dividir(obtenerValor(root.ChildNodes[0], ambito),
                                 obtenerValor(root.ChildNodes[2], ambito));
+                            return retorno;
+                        }
                         else if (root.ChildNodes[1].Term.Name.Equals("%"))
-                            return Calculadora.modular(obtenerValor(root.ChildNodes[0], ambito),
+                        {
+                            retorno = Calculadora.modular(obtenerValor(root.ChildNodes[0], ambito),
                                 obtenerValor(root.ChildNodes[2], ambito));
+                            return retorno;
+                        }
+                            
                     }
                     else if (root.ChildNodes.Count == 2)
                     {
@@ -212,8 +234,119 @@ namespace FI_Editor.Logica
             return null;
         }
 
-        public Object llamada(String identificador, List<Simbolo> parametros) {
+        public Object llamada(String identificador, ArrayList parametros) {
+
+            try
+            {
+                Procedimiento metodo = Global.buscarProcedimiento(identificador);
+                if (compararParametros(parametros, metodo.parametros)) {
+                    Tabla ambitoLocal = new Tabla();
+                    ambitoLocal.padre = Global.ambitoGlobal;
+                    ambitoLocal.heredar();
+
+                    //guardar los parametros en el ambito local
+                    if (metodo.parametros.Count > 0) {
+                        foreach (Simbolo sim in metodo.parametros) {
+                            ambitoLocal.tabla.Add(sim);
+                        }
+                    }
+
+                }
+                   
+            }
+            catch (Exception e)
+            {
+                //guardar el error aqui
+            }
             return null;
-        } 
+        }
+
+        public bool compararParametros(ArrayList valores, List<Simbolo> parametros) {
+
+            if (valores.Count != parametros.Count)
+                throw new Exception("La lista de parametros no concuerda con la llamada al metodo");
+
+            for (int i = 0; i < parametros.Count; i++) {
+                switch (parametros[i].tipo)
+                {
+                    case "int":
+                        if (!(valores[i] is int))
+                            throw new Exception("Los tipos de parametros y valores dados no concuerdan");
+                        break;
+
+                    case "char*":
+                        if (!(valores[i] is String))
+                            throw new Exception("Los tipos de parametros y valores dados no concuerdan");
+                        break;
+
+                    case "float":
+                        if (!(valores[i] is double))
+                            throw new Exception("Los tipos de parametros y valores dados no concuerdan");
+                        break;
+
+                    case "bool":
+                        if (!(valores[i] is bool))
+                            throw new Exception("Los tipos de parametros y valores dados no concuerdan");
+                        break;
+                }
+            }
+
+            return true;
+        }
+
+        public bool compararRetorno(String tipo, ParseTreeNode lista_sentencias) {
+
+            foreach (ParseTreeNode root in lista_sentencias.ChildNodes) {
+                if (root.ChildNodes[0].Term.Name.Equals("RETORNO"))
+                    return true;
+            }
+            throw new Exception("El metodo no posee una sentencia de retorno");
+        }
+
+        public Object ejecutarSentencias(ParseTreeNode root, Tabla ambitoActual) {
+
+            foreach (ParseTreeNode hijo in root.ChildNodes) {
+                ParseTreeNode inst = hijo.ChildNodes[0];
+                switch (inst.Term.Name) {
+                    case "WHILE":
+                        Tabla ambitoW = new Tabla(ambitoActual);
+                        ambitoW.heredar();
+                        break;
+
+                    case "DO_WHILE":
+                        Tabla ambitoD = new Tabla(ambitoActual);
+                        ambitoD.heredar();
+                        break;
+
+                    case "IF_ELSE":
+                        Tabla ambitoI = new Tabla(ambitoActual);
+                        ambitoI.heredar();
+                        break;
+
+                    case "DECLARACION":
+                        if (inst.ChildNodes.Count == 2) {
+                            String tipo = inst.ChildNodes[0].ChildNodes[0].Term.Name;
+                            guardarVariable(inst.ChildNodes[1], tipo, ambitoActual);
+                        }
+                        break;
+
+                    case "ASIGNACION_VAR":
+                        break;
+
+                    case "DINCREMENTOS":
+                        break;
+
+                    case "LLAMADA":
+                        break;
+
+                    case "FUNCION_IMPRIMIR":
+                        break;
+
+                    case "RETORNO":
+                        break;
+                }
+            }
+            return null;
+        }
     }
 }

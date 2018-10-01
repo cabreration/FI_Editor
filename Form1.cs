@@ -107,6 +107,8 @@ namespace FI_Editor
                 Acciones verdugo = new Acciones();
                 verdugo.reconocer(raiz);
                 Tabla aux = Global.ambitoGlobal;
+                List<Procedimiento> aix = Global.metodos;
+                ParseTreeNode main = Global.metodoMain;
                 MessageBox.Show("Analisis Completa con Exito :v", "CRL",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }

@@ -77,7 +77,7 @@ namespace FI_Editor.Gramatica
             NonTerminal EXPRESION = new NonTerminal("EXPRESION");
             NonTerminal METODO = new NonTerminal("METODO");
             NonTerminal LLAMADA = new NonTerminal("LLAMADA");
-            NonTerminal LISTA_PARAMETROS = new NonTerminal("PARAMETROS");
+            NonTerminal LISTA_PARAMETROS = new NonTerminal("LISTA_PARAMETROS");
             NonTerminal PARAMETRO = new NonTerminal("PARAMETRO");
             NonTerminal CONDICION = new NonTerminal("CONDICION");
             NonTerminal ACCION = new NonTerminal("ACCION");

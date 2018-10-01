@@ -41,7 +41,7 @@ namespace FI_Editor.Logica
                 if (proc.identificador.Equals(identificador))
                     return proc;
             }
-            return null;
+            throw new Exception("El metodo " + identificador + " no existe");
         }
     }
 }

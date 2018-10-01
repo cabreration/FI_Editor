@@ -31,9 +31,9 @@ namespace FI_Editor.Logica
                 if (arg2 is String)
                     return (String)(Convert.ToString((int)arg1) + (String)arg2);
                 else if (arg2 is int)
-                    return (int)((int)arg2 + (int)arg2);
+                    return (int)((int)arg1 + (int)arg2);
                 else if (arg2 is double)
-                    throw new Exception("No se pueden realizar operaciones aritmeticas entre int y float");
+                    return (double)(Convert.ToDouble(arg1) + (double)arg2);
                 else if (arg2 is bool)
                     throw new Exception("No se pueden realizar operaciones aritmeticas entre int y float");
             }
@@ -44,7 +44,7 @@ namespace FI_Editor.Logica
                 else if (arg2 is double)
                     return (double)((double)arg1 + (double)arg2);
                 else if (arg2 is int)
-                    throw new Exception("No se puede realizar operaciones aritmeticas entre int y float");
+                    return (double)((double)arg1 + Convert.ToDouble(arg2));
                 else if (arg2 is bool)
                     throw new Exception("No se puede realizar operaciones aritmeticas entre float y bool");
             }
@@ -117,7 +117,7 @@ namespace FI_Editor.Logica
                 if (arg2 is int)
                     return (int)((int)arg1 * (int)arg2);
                 else if (arg2 is double)
-                    throw new Exception("No se puede realizar operaciones aritmeticas entre int y float");
+                    return (double)(Convert.ToDouble(arg1) * (double)arg2);
                 else if (arg2 is String)
                     throw new Exception("No se puede realizar operaciones aritmeticas entre int y char*");
                 else if (arg2 is bool)
@@ -131,7 +131,7 @@ namespace FI_Editor.Logica
                 else if (arg2 is String)
                     throw new Exception("No se pueden realizar operaciones aritmeticas entre float y char*");
                 else if (arg2 is int)
-                    throw new Exception("No se pueden realizar operaciones aritmeticas entre float e int");
+                    return (double)((double)arg1 + Convert.ToDouble(arg2));
                 else if (arg2 is bool)
                     throw new Exception("No se pueden realizar operaciones aritmeticas entre float y bool");
             }
@@ -154,7 +154,7 @@ namespace FI_Editor.Logica
                 if (arg2 is int)
                     return (int)((int)arg1 / (int)arg2);
                 else if (arg2 is double)
-                    throw new Exception("No se puede realizar operaciones aritmeticas entre int y float");
+                    return (double)(Convert.ToDouble(arg1) / (double)arg2);
                 else if (arg2 is String)
                     throw new Exception("No se puede realizar operaciones aritmeticas entre int y char*");
                 else if (arg2 is bool)
@@ -162,13 +162,12 @@ namespace FI_Editor.Logica
             }
             else if (arg1 is double)
             {
-
                 if (arg2 is double)
                     return (double)((double)arg1 / (double)arg2);
                 else if (arg2 is String)
                     throw new Exception("No se pueden realizar operaciones aritmeticas entre float y char*");
                 else if (arg2 is int)
-                    throw new Exception("No se pueden realizar operaciones aritmeticas entre float e int");
+                    return (double)((double)arg1 / Convert.ToDouble(arg2));
                 else if (arg2 is bool)
                     throw new Exception("No se pueden realizar operaciones aritmeticas entre float y bool");
             }
@@ -191,7 +190,7 @@ namespace FI_Editor.Logica
                 if (arg2 is int)
                     return (int)((int)arg1 % (int)arg2);
                 else if (arg2 is double)
-                    throw new Exception("No se puede realizar operaciones aritmeticas entre int y float");
+                    return (double)(Convert.ToDouble(arg1) % (double)arg2);
                 else if (arg2 is String)
                     throw new Exception("No se puede realizar operaciones aritmeticas entre int y char*");
                 else if (arg2 is bool)
@@ -199,13 +198,12 @@ namespace FI_Editor.Logica
             }
             else if (arg1 is double)
             {
-
                 if (arg2 is double)
                     return (double)((double)arg1 % (double)arg2);
                 else if (arg2 is String)
                     throw new Exception("No se pueden realizar operaciones aritmeticas entre float y char*");
                 else if (arg2 is int)
-                    throw new Exception("No se pueden realizar operaciones aritmeticas entre float e int");
+                    return (double)((double)arg1 % Convert.ToDouble(arg2));
                 else if (arg2 is bool)
                     throw new Exception("No se pueden realizar operaciones aritmeticas entre float y bool");
             }
@@ -242,7 +240,7 @@ namespace FI_Editor.Logica
                 if (arg2 is int)
                     return (int)arg1 < (int)arg2;
                 else if (arg2 is double)
-                    throw new Exception("No se puede realizar operaciones relaciones entre int y float");
+                    return Convert.ToDouble(arg1) < (double)arg2;
                 else if (arg2 is String)
                     throw new Exception("No se puede realizar operaciones relaciones entre int y char*");
                 else if (arg2 is bool)
@@ -253,7 +251,7 @@ namespace FI_Editor.Logica
                 if (arg2 is double)
                     return (double)arg1 < (double)arg2;
                 else if (arg2 is int)
-                    throw new Exception("No se puede realizar operaciones relacionales entre float e int");
+                    return (double)arg1 < Convert.ToDouble(arg2);
                 else if (arg2 is String)
                     throw new Exception("No se puede realizar operaciones relacionales entre float y char*");
                 else if (arg2 is bool)
@@ -276,7 +274,7 @@ namespace FI_Editor.Logica
                 if (arg2 is int)
                     return (int)arg1 > (int)arg2;
                 else if (arg2 is double)
-                    throw new Exception("No se puede realizar operaciones relaciones entre int y float");
+                    return Convert.ToDouble(arg1) > (double)arg2;
                 else if (arg2 is String)
                     throw new Exception("No se puede realizar operaciones relaciones entre int y char*");
                 else if (arg2 is bool)
@@ -285,10 +283,9 @@ namespace FI_Editor.Logica
             else if (arg1 is double)
             {
                 if (arg2 is double)
-                    return (double)arg1 >
- (double)arg2;
+                    return (double)arg1 > (double)arg2;
                 else if (arg2 is int)
-                    throw new Exception("No se puede realizar operaciones relacionales entre float e int");
+                    return (double)arg1 > Convert.ToDouble(arg2);
                 else if (arg2 is String)
                     throw new Exception("No se puede realizar operaciones relacionales entre float y char*");
                 else if (arg2 is bool)
@@ -311,7 +308,7 @@ namespace FI_Editor.Logica
                 if (arg2 is int)
                     return (int)arg1 <= (int)arg2;
                 else if (arg2 is double)
-                    throw new Exception("No se puede realizar operaciones relaciones entre int y float");
+                    return Convert.ToDouble(arg1) <= (double)arg2;
                 else if (arg2 is String)
                     throw new Exception("No se puede realizar operaciones relaciones entre int y char*");
                 else if (arg2 is bool)
@@ -322,7 +319,7 @@ namespace FI_Editor.Logica
                 if (arg2 is double)
                     return (double)arg1 <= (double)arg2;
                 else if (arg2 is int)
-                    throw new Exception("No se puede realizar operaciones relacionales entre float e int");
+                    return (double)arg1 <= Convert.ToDouble(arg2);
                 else if (arg2 is String)
                     throw new Exception("No se puede realizar operaciones relacionales entre float y char*");
                 else if (arg2 is bool)
@@ -345,7 +342,7 @@ namespace FI_Editor.Logica
                 if (arg2 is int)
                     return (int)arg1 >= (int)arg2;
                 else if (arg2 is double)
-                    throw new Exception("No se puede realizar operaciones relaciones entre int y float");
+                    return Convert.ToDouble(arg1) >= (double)arg2;
                 else if (arg2 is String)
                     throw new Exception("No se puede realizar operaciones relaciones entre int y char*");
                 else if (arg2 is bool)
@@ -354,10 +351,9 @@ namespace FI_Editor.Logica
             else if (arg1 is double)
             {
                 if (arg2 is double)
-                    return (double)arg1 >=
- (double)arg2;
+                    return (double)arg1 >= (double)arg2;
                 else if (arg2 is int)
-                    throw new Exception("No se puede realizar operaciones relacionales entre float e int");
+                    return (double)arg1 >= Convert.ToDouble(arg2);
                 else if (arg2 is String)
                     throw new Exception("No se puede realizar operaciones relacionales entre float y char*");
                 else if (arg2 is bool)
@@ -388,7 +384,7 @@ namespace FI_Editor.Logica
                 if (arg2 is int)
                     return (int)arg1 == (int)arg2;
                 else if (arg2 is double)
-                    throw new Exception("No se puede realizar operaciones relaciones entre int y float");
+                    return Convert.ToDouble(arg1) == (double)arg2;
                 else if (arg2 is String)
                     throw new Exception("No se puede realizar operaciones relaciones entre int y char*");
                 else if (arg2 is bool)
@@ -399,7 +395,7 @@ namespace FI_Editor.Logica
                 if (arg2 is double)
                     return (double)arg1 == (double)arg2;
                 else if (arg2 is int)
-                    throw new Exception("No se puede realizar operaciones relacionales entre float e int");
+                    return (double)arg1 == Convert.ToDouble(arg2);
                 else if (arg2 is String)
                     throw new Exception("No se puede realizar operaciones relacionales entre float y char*");
                 else if (arg2 is bool)
@@ -430,7 +426,7 @@ namespace FI_Editor.Logica
                 if (arg2 is int)
                     return (int)arg1 != (int)arg2;
                 else if (arg2 is double)
-                    throw new Exception("No se puede realizar operaciones relaciones entre int y float");
+                    return Convert.ToDouble(arg1) != (double)arg2;
                 else if (arg2 is String)
                     throw new Exception("No se puede realizar operaciones relaciones entre int y char*");
                 else if (arg2 is bool)
@@ -441,7 +437,7 @@ namespace FI_Editor.Logica
                 if (arg2 is double)
                     return (double)arg1 != (double)arg2;
                 else if (arg2 is int)
-                    throw new Exception("No se puede realizar operaciones relacionales entre float e int");
+                    return (double)arg1 != Convert.ToDouble(arg2);
                 else if (arg2 is String)
                     throw new Exception("No se puede realizar operaciones relacionales entre float y char*");
                 else if (arg2 is bool)
