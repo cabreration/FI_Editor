@@ -120,5 +120,14 @@ namespace FI_Editor.Logica
             }
         }
 
+        public Object obtenerValor(String identificador) {
+
+            foreach (Simbolo sim in this.tabla) {
+                if (sim.identificador.Equals(identificador))
+                    return sim.valor;
+            }
+
+            throw new Exception("La variable " + identificador + " no ha sido declarada en el contexto actual");
+        }
     }
 }

@@ -243,7 +243,7 @@ namespace FI_Editor.Gramatica
                 | EXPRESION + dividir + EXPRESION
                 | EXPRESION + modular + EXPRESION
                 | restar + EXPRESION
-                | parentesisA + EXPRESION + parentesisC
+                | parentesisA + EXPRESION_LOGICA + parentesisC
                 | identificador
                 | LLAMADA
                 | identificador + incremento

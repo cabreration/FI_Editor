@@ -498,5 +498,37 @@ namespace FI_Editor.Logica
             }
             throw new Exception("Imposible realizar la operacion");
         }
+
+        public static Object incremento(Object arg1) {
+            if (arg1 == null)
+                throw new Exception("La variable indicada es de valor nulo");
+
+            if (arg1 is String)
+                throw new Exception("La operacion de incremento no se puede realizar sobre char*");
+            else if (arg1 is bool)
+                throw new Exception("La operacion de incremento no se puede realizar sobre valores booleanos");
+            else if (arg1 is int)
+                return ((int)arg1) + 1;
+            else if (arg1 is double)
+                return (double)arg1 + 1;
+
+            throw new Exception("Imposible realizar la operacion");
+        }
+
+        public static Object decremento(Object arg1) {
+            if (arg1 == null)
+                throw new Exception("La variable indicada es de valor nulo");
+
+            if (arg1 is String)
+                throw new Exception("La operacion de incremento no se puede realizar sobre char*");
+            else if (arg1 is bool)
+                throw new Exception("La operacion de incremento no se puede realizar sobre valores booleanos");
+            else if (arg1 is int)
+                return ((int)arg1) - 1;
+            else if (arg1 is double)
+                return (double)arg1 - 1;
+
+            throw new Exception("Imposible realizar la operacion");
+        }
     }
 }
