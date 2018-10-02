@@ -304,13 +304,15 @@ namespace FI_Editor.Logica
         }
 
         public Object ejecutarSentencias(ParseTreeNode root, Tabla ambitoActual) {
-
+            Object retorno = null;
             foreach (ParseTreeNode hijo in root.ChildNodes) {
                 ParseTreeNode inst = hijo.ChildNodes[0];
                 switch (inst.Term.Name) {
                     case "WHILE":
                         Tabla ambitoW = new Tabla(ambitoActual);
                         ambitoW.heredar();
+                        retorno = While(inst, ambitoW);
+                        if (retorno != null) return retorno;
                         break;
 
                     case "DO_WHILE":
@@ -321,6 +323,8 @@ namespace FI_Editor.Logica
                     case "IF_ELSE":
                         Tabla ambitoI = new Tabla(ambitoActual);
                         ambitoI.heredar();
+                        retorno = If_Else(inst, ambitoI);
+                        if (retorno != null) return retorno;
                         break;
 
                     case "DECLARACION":
@@ -345,6 +349,83 @@ namespace FI_Editor.Logica
                     case "RETORNO":
                         break;
                 }
+            }
+            return retorno;
+        }
+
+
+        public Object While(ParseTreeNode root, Tabla ambito) {
+
+            try
+            {
+                if (root.ChildNodes.Count == 3) {
+                    bool condicion = (bool)obtenerValor(root.ChildNodes[1].ChildNodes[0] , ambito);
+                    while (condicion) {
+                        Object retorno = ejecutarSentencias(root.ChildNodes[2], ambito);
+                        condicion = (bool)obtenerValor(root.ChildNodes[1].ChildNodes[0], ambito);
+
+                        if (retorno != null) return retorno;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                //capturar error semantico
+            }
+            return null;
+        }
+
+        public Object DoWhile(ParseTreeNode root, Tabla ambito) {
+            return null;
+        }
+
+        public Object If_Else(ParseTreeNode root, Tabla ambito) {
+
+            if (root.ChildNodes.Count == 3)
+            {
+                if (root.ChildNodes[2].Term.Name.Equals("ELSE"))
+                {
+                    try
+                    {
+                        bool condicion = (bool)obtenerValor(root.ChildNodes[1].ChildNodes[0], ambito);
+                        if (!condicion) {
+                            if (root.ChildNodes[2].ChildNodes.Count == 2)
+                                return ejecutarSentencias(root.ChildNodes[2].ChildNodes[1], ambito);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        //guardar error semantico
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        bool condit = (bool)obtenerValor(root.ChildNodes[1].ChildNodes[0], ambito);
+                        if (condit) return ejecutarSentencias(root.ChildNodes[2], ambito);
+                    }
+                    catch (Exception e)
+                    {
+                        //guardar error semantico
+                    }
+                }
+            }
+            else if (root.ChildNodes.Count == 4)
+            {
+                try
+                {
+                    bool cond = (bool)obtenerValor(root.ChildNodes[1].ChildNodes[0], ambito);
+                    if (cond) return ejecutarSentencias(root.ChildNodes[2], ambito);
+                    else {
+                        if (root.ChildNodes[3].ChildNodes.Count == 2)
+                            return ejecutarSentencias(root.ChildNodes[3].ChildNodes[1], ambito);
+                    }
+                }
+                catch (Exception e)
+                {
+                    //guardar error semantico
+                } 
             }
             return null;
         }
