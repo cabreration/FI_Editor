@@ -1,2 +1,14 @@
 int a = 7 + 7 + 7 + 7;
 float b = 2.5*2.5;
+char* c = "hola" + " mundo " + ":) " + " 27";
+bool d = false || false || false || false || true;
+bool e = true && true && true && true && false;
+int f = (89 - 91 + 5*5/5)% 2;
+print(c);
+char* g;
+g = c;
+g += " te atrape";
+int h = 1;
+h += 25;
+print(g);
+print(h);

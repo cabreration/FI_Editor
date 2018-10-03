@@ -16,6 +16,7 @@ namespace FI_Editor.Logica
         public static List<Procedimiento> metodos;
         public static ParseTreeNode root;
         public static ParseTreeNode metodoMain;
+        public static Form1 ide;
 
         public static bool contieneMetodo(String identificador) {
             if (Global.metodos == null) return false;

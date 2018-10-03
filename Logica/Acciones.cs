@@ -76,8 +76,9 @@ namespace FI_Editor.Logica
                     break;
 
                 case "FUNCION_IMPRIMIR":
+                    Imprimir(raiz.ChildNodes[1], Global.ambitoGlobal);
                     break;
-
+                
                 case "PRINCIPAL":
                     if (raiz.ChildNodes.Count == 3)
                         Global.metodoMain = raiz.ChildNodes[2];
@@ -86,10 +87,18 @@ namespace FI_Editor.Logica
                     break;
 
                 case "ASIGNACION_VAR":
+                    if (raiz.ChildNodes[1].ChildNodes[0].Term.Name.Equals("+="))
+                        asignarSuma(raiz.ChildNodes[2], Global.ambitoGlobal,
+                            raiz.ChildNodes[0].FindTokenAndGetText());
+                    else if (raiz.ChildNodes[1].ChildNodes[0].Term.Name.Equals("-="))
+                        asignarResta(raiz.ChildNodes[2], Global.ambitoGlobal,
+                            raiz.ChildNodes[0].FindTokenAndGetText());
+                    else if (raiz.ChildNodes[1].ChildNodes[0].Term.Name.Equals("="))
+                        asignarValor(raiz.ChildNodes[2], Global.ambitoGlobal,
+                            raiz.ChildNodes[0].FindTokenAndGetText());
                     break;
             }
         }
-
 
         public void guardarVariable(ParseTreeNode raiz, String tipo, Tabla ambito) {
             if (raiz.ChildNodes[0].Term.Name.Equals("LISTA_VARS"))
@@ -218,7 +227,7 @@ namespace FI_Editor.Logica
                             || root.ChildNodes[0].Term.Name.Equals("true"))
                             return true;
                         else if (root.ChildNodes[0].Term.Name.Equals("cadena"))
-                            return root.ChildNodes[0].FindTokenAndGetText();
+                            return limpiarCadena(root.ChildNodes[0].FindTokenAndGetText());
                         else if (root.ChildNodes[0].Term.Name.Equals("numero"))
                         {
                             double eval = Convert.ToDouble(root.FindTokenAndGetText());
@@ -344,6 +353,7 @@ namespace FI_Editor.Logica
                         break;
 
                     case "FUNCION_IMPRIMIR":
+                        Imprimir(inst.ChildNodes[1], ambitoActual);
                         break;
 
                     case "RETORNO":
@@ -352,7 +362,6 @@ namespace FI_Editor.Logica
             }
             return retorno;
         }
-
 
         public Object While(ParseTreeNode root, Tabla ambito) {
 
@@ -428,6 +437,43 @@ namespace FI_Editor.Logica
                 } 
             }
             return null;
+        }
+
+        public void Imprimir(ParseTreeNode expresion, Tabla ambito) {
+            try
+            {
+                string print = Convert.ToString(obtenerValor(expresion, ambito));
+                Global.ide.imprimir(print);
+            }
+            catch (Exception e)
+            {
+                //guardar error semantico
+            }
+        }
+
+        public string limpiarCadena(string cadena) {
+            return cadena.Substring(1, cadena.Length - 2);
+        }
+
+        public void asignarValor(ParseTreeNode valor, Tabla ambito, string identificador) {
+            object value = obtenerValor(valor, ambito);
+            ambito.actualizarValor(identificador, value);
+        }
+
+        public void asignarSuma(ParseTreeNode valor, Tabla ambito, string identificador) {
+            Object valorOriginal = ambito.obtenerValor(identificador);
+            object valorSum = obtenerValor(valor, ambito);
+            object nuevoValor = Calculadora.sumar(valorOriginal, valorSum);
+
+            ambito.actualizarValor(identificador, nuevoValor);
+        }
+
+        public void asignarResta(ParseTreeNode valor, Tabla ambito, string identificador) {
+            Object valorOriginal = ambito.obtenerValor(identificador);
+            object valorSum = obtenerValor(valor, ambito);
+            object nuevoValor = Calculadora.restar(valorOriginal, valorSum);
+
+            ambito.actualizarValor(identificador, nuevoValor);
         }
     }
 }

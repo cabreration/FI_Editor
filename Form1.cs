@@ -60,6 +60,7 @@ namespace FI_Editor
 
         private void analizarToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            this.consolaSalidas.Text = "";
             this.consolaErrores.Text = "";
             int actual = this.archivos.SelectedIndex;
             String texto = ((RichTextBox)((this.archivos.Controls[actual]).Controls[0])).Text;
@@ -123,6 +124,14 @@ namespace FI_Editor
             pagina.CursorChanged += new EventHandler(cambiarPos);
             pagina.Controls.Add(arch);
             this.archivos.Controls.Add(pagina);
+        }
+
+        public void imprimir(string impresion) {
+            this.consolaSalidas.Text += impresion + "\n";
+        }
+
+        public void imprimirErrores(string errores) {
+            this.consolaSalidas.Text += errores + "\n";
         }
     }
 }

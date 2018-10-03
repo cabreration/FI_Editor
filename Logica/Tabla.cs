@@ -137,13 +137,19 @@ namespace FI_Editor.Logica
             }
         }
 
-        public void actualizarPadre() {
+        public void escalarAmbitos() {
 
-            foreach (Simbolo sim in this.tabla) {
-                foreach (Simbolo sim2 in this.padre.tabla) {
-                    if (sim.identificador.Equals(sim2.identificador))
-                        sim2.valor = sim.valor;
+            Tabla darth = this.padre;
+            Tabla luke = this;
+            while (darth != null) {
+                foreach (Simbolo sim in luke.tabla) {
+                    foreach (Simbolo sim2 in darth.tabla) {
+                        if (sim.identificador.Equals(sim2.identificador))
+                            sim2.valor = sim.valor;
+                    }
                 }
+                luke = darth;
+                darth = darth.padre;
             }
         }
     }
