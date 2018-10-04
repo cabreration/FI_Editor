@@ -307,7 +307,7 @@ namespace FI_Editor.Logica
             return true;
         }
 
-        public bool compararRetorno(String tipo, ParseTreeNode lista_sentencias) {
+        public bool compararRetorno(ParseTreeNode lista_sentencias) {
 
             foreach (ParseTreeNode root in lista_sentencias.ChildNodes) {
                 if (root.ChildNodes[0].Term.Name.Equals("RETORNO"))
@@ -325,19 +325,31 @@ namespace FI_Editor.Logica
                         Tabla ambitoW = new Tabla(ambitoActual);
                         ambitoW.heredar();
                         retorno = While(inst, ambitoW);
-                        if (retorno != null) return retorno;
+                        if (retorno != null) {
+                            ambitoActual.escalarAmbitos();
+                            return retorno;
+                        }
                         break;
 
                     case "DO_WHILE":
                         Tabla ambitoD = new Tabla(ambitoActual);
                         ambitoD.heredar();
+                        retorno = DoWhile(inst, ambitoD);
+                        if (retorno != null) {
+                            ambitoActual.escalarAmbitos();
+                            return retorno;
+                        }
                         break;
 
                     case "IF_ELSE":
                         Tabla ambitoI = new Tabla(ambitoActual);
                         ambitoI.heredar();
                         retorno = If_Else(inst, ambitoI);
-                        if (retorno != null) return retorno;
+                        if (retorno != null)
+                        {
+                            ambitoActual.escalarAmbitos();
+                            return retorno;
+                        }
                         break;
 
                     case "DECLARACION":
@@ -372,11 +384,15 @@ namespace FI_Editor.Logica
                         break;
 
                     case "RETORNO":
+                        ambitoActual.escalarAmbitos();
+                        // validar que el retorno concuerde con el tipo de dato
+                        //evaluar el retorno;
+                        //return retorno;
                         break;
                 }
             }
-            ambitoActual.escalarAmbitos();
             return retorno;
+            //throw new Exception("El metodo no contiene sentencia de retorno o su retorno es de tipo incorrecto");
         }
 
         public Object While(ParseTreeNode root, Tabla ambito) {
@@ -388,12 +404,12 @@ namespace FI_Editor.Logica
                     while (condicion) {
                         Object retorno = ejecutarSentencias(root.ChildNodes[2], ambito);
                         condicion = (bool)obtenerValor(root.ChildNodes[1].ChildNodes[0], ambito);
-
-                        if (retorno != null) {
-                            ambito.escalarAmbitos();
+                        ambito.escalarAmbitos();
+                        Tabla padre = ambito.padre;
+                        ambito = new Tabla(padre);
+                        ambito.heredar();
+                        if (retorno != null)            
                             return retorno;
-                        }
-                            
                     }
                 }
             }
@@ -401,11 +417,33 @@ namespace FI_Editor.Logica
             {
                 //capturar error semantico
             }
-            ambito.escalarAmbitos();
             return null;
         }
 
         public Object DoWhile(ParseTreeNode root, Tabla ambito) {
+            try
+            {
+                if (root.ChildNodes.Count == 4)
+                {
+                    object retorno = null;
+                    bool condicion = false;
+                    do
+                    {
+                        retorno = ejecutarSentencias(root.ChildNodes[1], ambito);
+                        condicion = (bool)obtenerValor(root.ChildNodes[4].ChildNodes[0], ambito);
+                        ambito.escalarAmbitos();
+                        Tabla padre = ambito.padre;
+                        ambito = new Tabla(padre);
+                        ambito.heredar();
+                        if (retorno != null)
+                            return retorno;
+                    }
+                    while (condicion);
+                }
+            }
+            catch (Exception e) {
+                //error semantico
+            }
             return null;
         }
 

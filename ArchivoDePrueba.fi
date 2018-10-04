@@ -7,4 +7,27 @@ int main() {
 	print(b + " " + c);
 	a++;
 	print(a);
+	char* d = "esta tiene que aparecer en el if";
+	if (a < c) {
+		print(d);
+		print("c es mayor que a");
+		d = "este cambio tiene que salir del if";
+	}
+	else {
+		print("a es mayor que c");
+	}
+
+	print(d);
+
+	int h = 1;
+	while (h < 10) {
+		int y = h % 2;
+		if (y == 0) {
+		print("El valor de h es: " + h);
+		}
+		h++;
+	}
+	print("El valor de h es: " + h);
+
+	return 0;
 }

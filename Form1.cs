@@ -114,11 +114,19 @@ namespace FI_Editor
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 if (main != null) {
-                    Acciones act = new Acciones();
-                    Tabla ambitoMain = new Tabla(Global.ambitoGlobal);
-                    ambitoMain.heredar();
-                    act.ejecutarSentencias(main, ambitoMain);
+                    try
+                    {
+                        Acciones act = new Acciones();
+                        Tabla ambitoMain = new Tabla(Global.ambitoGlobal);
+                        ambitoMain.heredar();
+                        act.compararRetorno(main);
+                        act.ejecutarSentencias(main, ambitoMain);
+                    }
+                    catch (Exception er) {
+                        //error semantico
+                    }
                 }
+                Tabla aux2 = Global.ambitoGlobal;
             }
         }
 
