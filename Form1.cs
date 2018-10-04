@@ -110,8 +110,15 @@ namespace FI_Editor
                 Tabla aux = Global.ambitoGlobal;
                 List<Procedimiento> aix = Global.metodos;
                 ParseTreeNode main = Global.metodoMain;
-                MessageBox.Show("Analisis Completa con Exito :v", "CRL",
+                MessageBox.Show("Analisis Completa con Exito :v", "FI",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                if (main != null) {
+                    Acciones act = new Acciones();
+                    Tabla ambitoMain = new Tabla(Global.ambitoGlobal);
+                    ambitoMain.heredar();
+                    act.ejecutarSentencias(main, ambitoMain);
+                }
             }
         }
 

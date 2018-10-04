@@ -126,7 +126,8 @@ namespace FI_Editor.Gramatica
                 | METODO
                 | FUNCION_IMPRIMIR
                 | PRINCIPAL
-                | ASIGNACION_VAR;
+                | ASIGNACION_VAR
+                | DINCREMENTOS;
 
             #endregion
 

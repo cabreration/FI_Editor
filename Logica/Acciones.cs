@@ -97,6 +97,10 @@ namespace FI_Editor.Logica
                         asignarValor(raiz.ChildNodes[2], Global.ambitoGlobal,
                             raiz.ChildNodes[0].FindTokenAndGetText());
                     break;
+
+                case "DINCREMENTOS":
+                    dincremento(raiz, Global.ambitoGlobal);
+                    break;
             }
         }
 
@@ -113,7 +117,7 @@ namespace FI_Editor.Logica
                 foreach (ParseTreeNode root in raiz.ChildNodes[0].ChildNodes) {
                     try
                     {
-                        Object valor = obtenerValor(root.ChildNodes[2], Global.ambitoGlobal);
+                        Object valor = obtenerValor(root.ChildNodes[2], ambito);
                         foreach (ParseTreeNode vari in root.ChildNodes[0].ChildNodes)
                         {
                             Simbolo sim = new Simbolo(tipo, vari.FindTokenAndGetText(), valor);
@@ -339,14 +343,25 @@ namespace FI_Editor.Logica
                     case "DECLARACION":
                         if (inst.ChildNodes.Count == 2) {
                             String tipo = inst.ChildNodes[0].ChildNodes[0].Term.Name;
+                            if (tipo.Equals("char")) tipo = "char*";
                             guardarVariable(inst.ChildNodes[1], tipo, ambitoActual);
                         }
                         break;
 
                     case "ASIGNACION_VAR":
+                        if (inst.ChildNodes[1].ChildNodes[0].Term.Name.Equals("+="))
+                            asignarSuma(inst.ChildNodes[2], ambitoActual,
+                                inst.ChildNodes[0].FindTokenAndGetText());
+                        else if (inst.ChildNodes[1].ChildNodes[0].Term.Name.Equals("-="))
+                            asignarResta(inst.ChildNodes[2], ambitoActual,
+                                inst.ChildNodes[0].FindTokenAndGetText());
+                        else if (inst.ChildNodes[1].ChildNodes[0].Term.Name.Equals("="))
+                            asignarValor(inst.ChildNodes[2], ambitoActual,
+                                inst.ChildNodes[0].FindTokenAndGetText());
                         break;
 
                     case "DINCREMENTOS":
+                        dincremento(inst, ambitoActual);
                         break;
 
                     case "LLAMADA":
@@ -360,6 +375,7 @@ namespace FI_Editor.Logica
                         break;
                 }
             }
+            ambitoActual.escalarAmbitos();
             return retorno;
         }
 
@@ -373,7 +389,11 @@ namespace FI_Editor.Logica
                         Object retorno = ejecutarSentencias(root.ChildNodes[2], ambito);
                         condicion = (bool)obtenerValor(root.ChildNodes[1].ChildNodes[0], ambito);
 
-                        if (retorno != null) return retorno;
+                        if (retorno != null) {
+                            ambito.escalarAmbitos();
+                            return retorno;
+                        }
+                            
                     }
                 }
             }
@@ -381,6 +401,7 @@ namespace FI_Editor.Logica
             {
                 //capturar error semantico
             }
+            ambito.escalarAmbitos();
             return null;
         }
 
@@ -389,7 +410,7 @@ namespace FI_Editor.Logica
         }
 
         public Object If_Else(ParseTreeNode root, Tabla ambito) {
-
+            object retorno = null;
             if (root.ChildNodes.Count == 3)
             {
                 if (root.ChildNodes[2].Term.Name.Equals("ELSE"))
@@ -399,7 +420,13 @@ namespace FI_Editor.Logica
                         bool condicion = (bool)obtenerValor(root.ChildNodes[1].ChildNodes[0], ambito);
                         if (!condicion) {
                             if (root.ChildNodes[2].ChildNodes.Count == 2)
-                                return ejecutarSentencias(root.ChildNodes[2].ChildNodes[1], ambito);
+                            {
+                                retorno = ejecutarSentencias(root.ChildNodes[2].ChildNodes[1], ambito);
+                                if (retorno != null) {
+                                    ambito.escalarAmbitos();
+                                    return retorno;
+                                }
+                            }
                         }
                     }
                     catch (Exception e)
@@ -412,7 +439,14 @@ namespace FI_Editor.Logica
                     try
                     {
                         bool condit = (bool)obtenerValor(root.ChildNodes[1].ChildNodes[0], ambito);
-                        if (condit) return ejecutarSentencias(root.ChildNodes[2], ambito);
+                        if (condit)
+                        {
+                            retorno = ejecutarSentencias(root.ChildNodes[2], ambito);
+                            if (retorno != null) {
+                                ambito.escalarAmbitos();
+                                return retorno;
+                            }
+                        }
                     }
                     catch (Exception e)
                     {
@@ -428,7 +462,13 @@ namespace FI_Editor.Logica
                     if (cond) return ejecutarSentencias(root.ChildNodes[2], ambito);
                     else {
                         if (root.ChildNodes[3].ChildNodes.Count == 2)
-                            return ejecutarSentencias(root.ChildNodes[3].ChildNodes[1], ambito);
+                        {
+                            retorno = ejecutarSentencias(root.ChildNodes[3].ChildNodes[1], ambito);
+                            if (retorno != null) {
+                                ambito.escalarAmbitos();
+                                return retorno;
+                            }
+                        }
                     }
                 }
                 catch (Exception e)
@@ -436,6 +476,7 @@ namespace FI_Editor.Logica
                     //guardar error semantico
                 } 
             }
+            ambito.escalarAmbitos();
             return null;
         }
 
@@ -456,24 +497,67 @@ namespace FI_Editor.Logica
         }
 
         public void asignarValor(ParseTreeNode valor, Tabla ambito, string identificador) {
-            object value = obtenerValor(valor, ambito);
-            ambito.actualizarValor(identificador, value);
+            try
+            {
+                object value = obtenerValor(valor, ambito);
+                ambito.actualizarValor(identificador, value);
+            }
+            catch (Exception e) {
+                //guardar error semantico
+            }
         }
 
         public void asignarSuma(ParseTreeNode valor, Tabla ambito, string identificador) {
-            Object valorOriginal = ambito.obtenerValor(identificador);
-            object valorSum = obtenerValor(valor, ambito);
-            object nuevoValor = Calculadora.sumar(valorOriginal, valorSum);
+            try
+            {
+                Object valorOriginal = ambito.obtenerValor(identificador);
+                object valorSum = obtenerValor(valor, ambito);
+                object nuevoValor = Calculadora.sumar(valorOriginal, valorSum);
 
-            ambito.actualizarValor(identificador, nuevoValor);
+                ambito.actualizarValor(identificador, nuevoValor);
+            }
+            catch (Exception e) {
+                //guardar error semantico
+            }
         }
 
         public void asignarResta(ParseTreeNode valor, Tabla ambito, string identificador) {
-            Object valorOriginal = ambito.obtenerValor(identificador);
-            object valorSum = obtenerValor(valor, ambito);
-            object nuevoValor = Calculadora.restar(valorOriginal, valorSum);
+            try
+            {
+                Object valorOriginal = ambito.obtenerValor(identificador);
+                object valorSum = obtenerValor(valor, ambito);
+                object nuevoValor = Calculadora.restar(valorOriginal, valorSum);
 
-            ambito.actualizarValor(identificador, nuevoValor);
+                ambito.actualizarValor(identificador, nuevoValor);
+            }
+            catch (Exception e) {
+                //guardar error semantico
+            }
+        }
+
+        public void dincremento(ParseTreeNode instruccion, Tabla ambitoActual) {
+            try
+            {
+                if (instruccion.ChildNodes[1].Term.Name.Equals("++"))
+                {
+                    Object valorOriginal = ambitoActual.obtenerValor(instruccion.ChildNodes[0].FindTokenAndGetText());
+                    object nuevoValor = Calculadora.sumar(valorOriginal, 1);
+
+                    ambitoActual.actualizarValor(instruccion.ChildNodes[0].FindTokenAndGetText(),
+                        nuevoValor);
+                }
+                else if (instruccion.ChildNodes[1].Term.Name.Equals("--"))
+                {
+                    object valorOriginal = ambitoActual.obtenerValor(instruccion.ChildNodes[0].FindTokenAndGetText());
+                    object nuevoValor = Calculadora.restar(valorOriginal, 1);
+
+                    ambitoActual.actualizarValor(instruccion.ChildNodes[0].FindTokenAndGetText(),
+                        nuevoValor);
+                }
+            }
+            catch (Exception e) {
+                //guardar error semantico
+            }
         }
     }
 }

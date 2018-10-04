@@ -1,39 +1,10 @@
+
+int g = 360;
 int main() {
-	int a = 10;
-	char* b = "arreglo de caracteres";
-	float c = 15.5;
-	bool d = false;
+	int a = 25;
+	char* b = "hola mundo";
+	int c = a + 50;
+	print(b + " " + c);
+	a++;
+	print(a);
 }
-
-int h = 56 + 4;
-float p = 8*9-2.5;
-int e = 81/9;
-int f = -5 +8;
-char* o = "hola" + " hola";
-bool r = 5 < 9, i = "hola" != "hola", j = 5 > 10;
-bool q = true && false;
-bool y = false || false;
-
-r = true;
-
-char* metodo1(char* a, char* b) {
-	return a + " " + b;
-}
-
-int metodo2(int a) {
-	if (a < 10) {
-		while (a < 15) {
-			a++;
-		}
-	}
-	else {
-		do {
-			a--;
-			while (a > 19)
-			{
-				metodo1("hola", "hola2");
-			}
-		}
-		while (a > 0);
-	}
-} 
