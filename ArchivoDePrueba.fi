@@ -29,5 +29,18 @@ int main() {
 	}
 	print("El valor de h es: " + h);
 
+	int t = 0;
+	print("El valor de t ahora es: " + t);
+	do {
+		int y = t % 2;
+		if (y == 1) {
+			print("El valor de t es: " + t);
+		}
+		t++;
+	} while(t > 0 && t < 10);
+
+	t--;
+	t--;
+	print("El valor final de t es: " + t);
 	return 0;
 }

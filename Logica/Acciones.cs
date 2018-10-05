@@ -377,6 +377,7 @@ namespace FI_Editor.Logica
                         break;
 
                     case "LLAMADA":
+                        llamada(inst, ambitoActual);
                         break;
 
                     case "FUNCION_IMPRIMIR":
@@ -430,7 +431,7 @@ namespace FI_Editor.Logica
                     do
                     {
                         retorno = ejecutarSentencias(root.ChildNodes[1], ambito);
-                        condicion = (bool)obtenerValor(root.ChildNodes[4].ChildNodes[0], ambito);
+                        condicion = (bool)obtenerValor(root.ChildNodes[3].ChildNodes[0], ambito);
                         ambito.escalarAmbitos();
                         Tabla padre = ambito.padre;
                         ambito = new Tabla(padre);
@@ -596,6 +597,56 @@ namespace FI_Editor.Logica
             catch (Exception e) {
                 //guardar error semantico
             }
+        }
+
+        public object llamada(ParseTreeNode root, Tabla ambitoActual) {
+            object retorno = null;
+            if (root.ChildNodes.Count == 1)
+            {
+                String identificador = root.ChildNodes[0].FindTokenAndGetText();
+                try
+                {
+                    Procedimiento metodo = Global.buscarProcedimiento(identificador);
+                    if (metodo.parametros.Count == 0)
+                    {
+                        Tabla ambitoMetodo = new Tabla(ambitoActual);
+                        ambitoMetodo.heredar();
+                        retorno = ejecutarSentencias(metodo.root, ambitoMetodo);
+                        //verificar que el tipo de dato de retorno concuerde con el tipo
+                        return retorno;
+                    }
+                    else
+                    {
+                        string error = "La lista de parametros no concuerda con los parametros recibidos";
+                        //guardar error semantico y dispararlo;
+                    }
+                }
+                catch (Exception e)
+                {
+                    //guardar error semantico
+                }
+            }
+            else if (root.ChildNodes.Count == 2)
+            {
+                String identificador = root.ChildNodes[0].FindTokenAndGetText();
+                ArrayList parametros = obtenerParametros(root.ChildNodes[1], ambitoActual);
+            }
+            throw new Exception("La llamada no funciono");
+        }
+
+        public ArrayList obtenerParametros(ParseTreeNode root, Tabla ambito) {
+            ArrayList parametros = new ArrayList();
+
+            foreach (ParseTreeNode hijo in root.ChildNodes) {
+                object parametro = obtenerValor(hijo, ambito);
+                parametros.Add(parametro);
+            }
+
+            return parametros;
+        }
+
+        public bool verificarParametros(Procedimiento metodo, ArrayList valores) {
+            return false;
         }
     }
 }
