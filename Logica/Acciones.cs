@@ -386,14 +386,11 @@ namespace FI_Editor.Logica
 
                     case "RETORNO":
                         ambitoActual.escalarAmbitos();
-                        // validar que el retorno concuerde con el tipo de dato
-                        //evaluar el retorno;
-                        //return retorno;
-                        break;
+                        retorno = obtenerValor(inst.ChildNodes[0], ambitoActual);
+                        return retorno;
                 }
             }
             return retorno;
-            //throw new Exception("El metodo no contiene sentencia de retorno o su retorno es de tipo incorrecto");
         }
 
         public Object While(ParseTreeNode root, Tabla ambito) {
@@ -612,8 +609,8 @@ namespace FI_Editor.Logica
                         Tabla ambitoMetodo = new Tabla(ambitoActual);
                         ambitoMetodo.heredar();
                         retorno = ejecutarSentencias(metodo.root, ambitoMetodo);
-                        //verificar que el tipo de dato de retorno concuerde con el tipo
-                        return retorno;
+                        if (verificarRetorno(retorno, metodo.tipo))
+                            return retorno;
                     }
                     else
                     {
@@ -630,6 +627,26 @@ namespace FI_Editor.Logica
             {
                 String identificador = root.ChildNodes[0].FindTokenAndGetText();
                 ArrayList parametros = obtenerParametros(root.ChildNodes[1], ambitoActual);
+                try
+                {
+                    Procedimiento metodo = Global.buscarProcedimiento(identificador);
+                    if(verificarParametros(metodo, parametros));
+                    //llenar la tabla de simbolos
+                    Tabla tablaMetodo = new Tabla(ambitoActual);
+                    tablaMetodo.heredar();
+                    for (int i = 0; i < metodo.parametros.Count; i++)
+                    {
+                        Simbolo sim = new Simbolo(metodo.parametros[i].tipo,
+                            metodo.parametros[i].identificador, parametros[i]);
+                        tablaMetodo.insertarConValor(sim);
+                    }
+                    retorno = ejecutarSentencias(metodo.root, tablaMetodo);
+                    if (verificarRetorno(retorno, metodo.tipo))
+                        return retorno;
+                }
+                catch (Exception e) {
+                    //guardar error semantico
+                }
             }
             throw new Exception("La llamada no funciono");
         }
@@ -646,7 +663,65 @@ namespace FI_Editor.Logica
         }
 
         public bool verificarParametros(Procedimiento metodo, ArrayList valores) {
-            return false;
+
+            if (metodo.parametros.Count < valores.Count)
+                throw new Exception("No existe una declaracion del metodo " + metodo.identificador
+                    + " con tantos parametros");
+
+            if (metodo.parametros.Count > valores.Count)
+                throw new Exception("No existe una declaracion del metodo " + metodo.identificador
+                    + " con tan pocos parametros");
+
+            for (int i = 0; i < metodo.parametros.Count; i++)
+            {
+                if (metodo.parametros[i].tipo.Equals("int"))
+                {
+                    if (!(valores[i] is int)) throw new Exception("Los parametros no concuerdan con su tipo de datos" +
+                            " en llamada al metodo " + metodo.identificador);
+                }
+                else if (metodo.parametros[i].tipo.Equals("char*"))
+                {
+                    if (!(valores[i] is string)) throw new Exception("Los parametros no concuerdan con su tipo de datos" +
+                            " en llamada al metodo " + metodo.identificador);
+                }
+                else if (metodo.parametros[i].tipo.Equals("bool"))
+                {
+                    if (!(valores[i] is bool)) throw new Exception("Los parametros no concuerdan con su tipo de datos" +
+                            " en llamada al metodo " + metodo.identificador);
+                }
+                else if (metodo.parametros[i].tipo.Equals("float"))
+                {
+                    if (!(valores[i] is double)) throw new Exception("Los parametros no concuerdan con su tipo de dato " +
+                            "en llamada al metodo " + metodo.identificador);
+                }
+            }
+            return true;
+        }
+
+        public bool verificarRetorno(object valor, String tipo) {
+
+            if (valor == null) throw new Exception("No hubo retorno, error");
+            else if (tipo.Equals("int"))
+            {
+                if (!(valor is int)) throw new Exception("El tipo de dato del retorno no" +
+                    " concuerda con el tipo de dato del metodo");
+            }
+            else if (tipo.Equals("float"))
+            {
+                if (!(valor is double)) throw new Exception("El tipo de dato del retorno no " +
+                    "concuerda con el tipo de dato del metodo");
+            }
+            else if (tipo.Equals("char*"))
+            {
+                if (!(valor is string)) throw new Exception("El tipo de dato del retorno no " +
+                    "concuerda con el tipo de dato del metodo");
+            }
+            else if (tipo.Equals("bool")) {
+                if (!(valor is bool)) throw new Exception("El tipo de dato del retorno no concuerda "
+                    + "con el tipo de dato del metodo");
+            }
+
+            return true;
         }
     }
 }
