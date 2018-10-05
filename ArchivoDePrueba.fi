@@ -1,6 +1,7 @@
 
 int g = 360;
 int main() {
+
 	int a = 25;
 	char* b = "hola mundo";
 	int c = a + 50;
@@ -42,5 +43,32 @@ int main() {
 	t--;
 	t--;
 	print("El valor final de t es: " + t);
+	int k = metodo1(5, 2);
+	print("El valor de k es: " + k);
+
+	print(metodo2());
+	metodo3(false, 2, 4.56);
 	return 0;
 }
+
+int metodo1(int w, int s) {
+	while (w < 10) {
+		w++;
+	}
+	while(s < 20) {
+		s++;
+	}
+	return w + s;
+}
+
+bool metodo2() {
+	return false || false || false || true;
+}
+
+char* metodo3(bool uno, int dos, float tres) {
+	char* retorno = "la combinacion de los tres elementos es: "
+	+ uno + " " + dos + " " + tres;
+	print(retorno);
+	return retorno;
+}
+

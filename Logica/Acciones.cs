@@ -238,38 +238,13 @@ namespace FI_Editor.Logica
                             if (eval % 1 == 0) return Convert.ToInt32(eval);
                             else return eval;
                         }
-                        else if (root.ChildNodes[0].Term.Name.Equals("LLAMADA")) { }
+                        else if (root.ChildNodes[0].Term.Name.Equals("LLAMADA")) {
+                            return llamada(root.ChildNodes[0], ambito);
+                        }
                         else if (root.ChildNodes[0].Term.Name.Equals("EXPRESION_LOGICA"))
                             return obtenerValor(root.ChildNodes[0], ambito);
                     }
                     break;
-            }
-            return null;
-        }
-
-        public Object llamada(String identificador, ArrayList parametros) {
-
-            try
-            {
-                Procedimiento metodo = Global.buscarProcedimiento(identificador);
-                if (compararParametros(parametros, metodo.parametros)) {
-                    Tabla ambitoLocal = new Tabla();
-                    ambitoLocal.padre = Global.ambitoGlobal;
-                    ambitoLocal.heredar();
-
-                    //guardar los parametros en el ambito local
-                    if (metodo.parametros.Count > 0) {
-                        foreach (Simbolo sim in metodo.parametros) {
-                            ambitoLocal.tabla.Add(sim);
-                        }
-                    }
-
-                }
-                   
-            }
-            catch (Exception e)
-            {
-                //guardar el error aqui
             }
             return null;
         }
@@ -386,7 +361,7 @@ namespace FI_Editor.Logica
 
                     case "RETORNO":
                         ambitoActual.escalarAmbitos();
-                        retorno = obtenerValor(inst.ChildNodes[0], ambitoActual);
+                        retorno = obtenerValor(inst.ChildNodes[1], ambitoActual);
                         return retorno;
                 }
             }
@@ -630,19 +605,21 @@ namespace FI_Editor.Logica
                 try
                 {
                     Procedimiento metodo = Global.buscarProcedimiento(identificador);
-                    if(verificarParametros(metodo, parametros));
-                    //llenar la tabla de simbolos
-                    Tabla tablaMetodo = new Tabla(ambitoActual);
-                    tablaMetodo.heredar();
-                    for (int i = 0; i < metodo.parametros.Count; i++)
+                    if (verificarParametros(metodo, parametros))
                     {
-                        Simbolo sim = new Simbolo(metodo.parametros[i].tipo,
-                            metodo.parametros[i].identificador, parametros[i]);
-                        tablaMetodo.insertarConValor(sim);
+                        //llenar la tabla de simbolos
+                        Tabla tablaMetodo = new Tabla(ambitoActual);
+                        tablaMetodo.heredar();
+                        for (int i = 0; i < metodo.parametros.Count; i++)
+                        {
+                            Simbolo sim = new Simbolo(metodo.parametros[i].tipo,
+                                metodo.parametros[i].identificador, parametros[i]);
+                            tablaMetodo.insertarConValor(sim);
+                        }
+                        retorno = ejecutarSentencias(metodo.root, tablaMetodo);
+                        if (verificarRetorno(retorno, metodo.tipo))
+                            return retorno;
                     }
-                    retorno = ejecutarSentencias(metodo.root, tablaMetodo);
-                    if (verificarRetorno(retorno, metodo.tipo))
-                        return retorno;
                 }
                 catch (Exception e) {
                     //guardar error semantico

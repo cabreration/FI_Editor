@@ -19,6 +19,7 @@ namespace FI_Editor.Logica
             this.tipo = tipo;
             this.identificador = identificador;
             this.parametros = new List<Simbolo>();
+            this.root = raiz;
         }
 
         public Procedimiento(String tipo, String identificador, ParseTreeNode root, List<Simbolo> parametros) {
