@@ -123,7 +123,7 @@ namespace FI_Editor
                         act.ejecutarSentencias(main, ambitoMain);
                     }
                     catch (Exception er) {
-                        //error semantico
+                        Global.ide.imprimirErrores(er.Message);
                     }
                 }
                 Tabla aux2 = Global.ambitoGlobal;
@@ -146,7 +146,7 @@ namespace FI_Editor
         }
 
         public void imprimirErrores(string errores) {
-            this.consolaSalidas.Text += errores + "\n";
+            this.consolaErrores.Text += errores + "\n";
         }
     }
 }

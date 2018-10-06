@@ -126,7 +126,7 @@ namespace FI_Editor.Logica
                     }
                     catch (Exception e)
                     {
-                        //aqui debo guardar el error semantico de la operacion
+                        Global.ide.imprimirErrores(e.Message);
                     }
                 }
             }
@@ -388,7 +388,7 @@ namespace FI_Editor.Logica
             }
             catch (Exception e)
             {
-                //capturar error semantico
+                Global.ide.imprimirErrores(e.Message);
             }
             return null;
         }
@@ -415,7 +415,7 @@ namespace FI_Editor.Logica
                 }
             }
             catch (Exception e) {
-                //error semantico
+                Global.ide.imprimirErrores(e.Message);
             }
             return null;
         }
@@ -442,7 +442,7 @@ namespace FI_Editor.Logica
                     }
                     catch (Exception e)
                     {
-                        //guardar error semantico
+                        Global.ide.imprimirErrores(e.Message);
                     }
                 }
                 else
@@ -461,7 +461,7 @@ namespace FI_Editor.Logica
                     }
                     catch (Exception e)
                     {
-                        //guardar error semantico
+                        Global.ide.imprimirErrores(e.Message);
                     }
                 }
             }
@@ -484,7 +484,7 @@ namespace FI_Editor.Logica
                 }
                 catch (Exception e)
                 {
-                    //guardar error semantico
+                    Global.ide.imprimirErrores(e.Message);
                 } 
             }
             ambito.escalarAmbitos();
@@ -499,7 +499,7 @@ namespace FI_Editor.Logica
             }
             catch (Exception e)
             {
-                //guardar error semantico
+                Global.ide.imprimirErrores(e.Message);
             }
         }
 
@@ -514,7 +514,7 @@ namespace FI_Editor.Logica
                 ambito.actualizarValor(identificador, value);
             }
             catch (Exception e) {
-                //guardar error semantico
+                Global.ide.imprimirErrores(e.Message);
             }
         }
 
@@ -528,7 +528,7 @@ namespace FI_Editor.Logica
                 ambito.actualizarValor(identificador, nuevoValor);
             }
             catch (Exception e) {
-                //guardar error semantico
+                Global.ide.imprimirErrores(e.Message);
             }
         }
 
@@ -542,7 +542,7 @@ namespace FI_Editor.Logica
                 ambito.actualizarValor(identificador, nuevoValor);
             }
             catch (Exception e) {
-                //guardar error semantico
+                Global.ide.imprimirErrores(e.Message);
             }
         }
 
@@ -567,7 +567,7 @@ namespace FI_Editor.Logica
                 }
             }
             catch (Exception e) {
-                //guardar error semantico
+                Global.ide.imprimirErrores(e.Message);
             }
         }
 
@@ -590,12 +590,12 @@ namespace FI_Editor.Logica
                     else
                     {
                         string error = "La lista de parametros no concuerda con los parametros recibidos";
-                        //guardar error semantico y dispararlo;
+                        Global.ide.imprimirErrores(error);
                     }
                 }
                 catch (Exception e)
                 {
-                    //guardar error semantico
+                    Global.ide.imprimirErrores(e.Message);
                 }
             }
             else if (root.ChildNodes.Count == 2)
@@ -622,7 +622,7 @@ namespace FI_Editor.Logica
                     }
                 }
                 catch (Exception e) {
-                    //guardar error semantico
+                    Global.ide.imprimirErrores(e.Message);
                 }
             }
             throw new Exception("La llamada no funciono");
