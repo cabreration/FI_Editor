@@ -581,7 +581,7 @@ namespace FI_Editor.Logica
                     Procedimiento metodo = Global.buscarProcedimiento(identificador);
                     if (metodo.parametros.Count == 0)
                     {
-                        Tabla ambitoMetodo = new Tabla(ambitoActual);
+                        Tabla ambitoMetodo = new Tabla(Global.ambitoGlobal);
                         ambitoMetodo.heredar();
                         retorno = ejecutarSentencias(metodo.root, ambitoMetodo);
                         if (verificarRetorno(retorno, metodo.tipo))
@@ -608,7 +608,7 @@ namespace FI_Editor.Logica
                     if (verificarParametros(metodo, parametros))
                     {
                         //llenar la tabla de simbolos
-                        Tabla tablaMetodo = new Tabla(ambitoActual);
+                        Tabla tablaMetodo = new Tabla(Global.ambitoGlobal);
                         tablaMetodo.heredar();
                         for (int i = 0; i < metodo.parametros.Count; i++)
                         {
